@@ -1,0 +1,73 @@
+<script type="text/javascript">
+    window.onBotProtectReady = function() {
+        var startScript = Date.now();
+        if('BotProtect' in window) {
+            console.log('BotProtect token request.');
+            window.BotProtect.register({
+                publicKey: 'NnVoZ4wmrXBHVrGclCbsZVCrzsmkg5hs',
+                
+                callback: function(token) {
+                    console.log('Solved after ' + (Date.now() - startScript) + 'ms. Token: ' + token);
+                    
+                    if (token) {
+                        let uri = location.href.split('#')[0];
+                        let parms = location.search;
+                        let newParms = '';
+                        let removedParms = false;
+                        
+                        if(parms.includes('?bp=') || parms.includes('&bp=')) {
+                            let newParmsSplit = parms.split('&');
+                            for(let i of newParmsSplit) {
+                                let isMarker = i.startsWith('?bp=');
+                                if(i.startsWith('bp=')) isMarker = true;
+                                if(isMarker) removedParms = true;
+                                
+                                if(!isMarker) {
+                                    if(newParms !== '') {
+                                        newParms += '&';
+                                    } else if(!i.startsWith('?')) newParms += '?';
+                                    
+                                    newParms += i;
+                                }
+                            }
+                        }
+
+                        if(newParms === '' && removedParms === false) newParms = parms;
+                        uri = uri.replace(parms, '') + newParms;
+                        
+                        if(newParms) {
+                            uri += '&bp=' + token;
+                        } else uri += '?bp=' + token;
+                    
+                        window.location.href = uri;
+                    } else {
+                        console.error('No token');
+                        location.reload();
+                    }
+                }
+            });
+        } else {
+            console.log('Something went wrong.');
+            location.reload();
+        }
+    }
+    
+    if(false === true) {
+        const intrv = setInterval(function() {
+            if(document && document.body) {
+                clearInterval(intrv);
+                let area = document.getElementsByClassName('area')[0];
+                if(area) {
+                    area.style['pointer-events'] = 'none';
+                }
+                
+                const elem = document.createElement('div');
+                elem.style['z-index'] = "99999999999";
+                elem.innerHTML = '<div class="alert"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span><strong>Hey!</strong> Are you stuck on this page? If so, please try disabling your extensions. If you think this is an error please contact our support team by clicking this <a href="https://discord.gg/PgjRXn8D6N">link</a>.</div>';
+                document.body.insertBefore(elem, document.body.firstChild);
+            }
+        }, 50);
+    }
+</script>
+
+<script type="text/javascript" src="https://v2.bytefend.com/libs.js?v=405" defer></script>
